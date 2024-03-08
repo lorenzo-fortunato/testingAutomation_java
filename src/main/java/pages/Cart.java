@@ -22,7 +22,7 @@ public class Cart {
     WebElement checkoutBtn;
 
     public void goToCheckout() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.elementToBeClickable(checkoutBtn));
         checkoutBtn.click();
     }

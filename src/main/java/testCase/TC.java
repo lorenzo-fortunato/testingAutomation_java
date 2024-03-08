@@ -5,9 +5,12 @@ import fail.Fail;
 import org.apache.log4j.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -18,6 +21,7 @@ import utilities.ExcelUtils;
 import utilities.TestLogger;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class TC {
     public WebDriver driver;
@@ -76,7 +80,7 @@ public class TC {
                 Log.info("Logged in with user: " + user + " and password: " + pwd);
 
                 addProductToCart(checkout_action, homeIn);
-                goFormCartToCheckout(checkout_action);
+                goFromCartToCheckout(checkout_action);
                 verifyOrder();
 
                 driver.navigate().to(Constants.Url);
@@ -139,12 +143,15 @@ public class TC {
         }
     }
 
-    private void goFormCartToCheckout(Checkout_action actionCheckout) throws IOException {
-        String elementInCart = driver.findElement(By.xpath("//h5[@class='product-title optimizedCheckout-contentPrimary']")).getText();
-        if (elementInCart.equalsIgnoreCase(product)) {
+    private void goFromCartToCheckout(Checkout_action actionCheckout) throws IOException {
+        WebElement elementInCart = driver.findElement(By.xpath("//h5[@class='product-title optimizedCheckout-contentPrimary']"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(elementInCart));
+        String productName = elementInCart.getText();
+        if (productName.equalsIgnoreCase(product)) {
             actionCheckout.executeCheckout(firstName, lastName, address, state, postCode);
         } else {
-            Fail.fail(Log, "Wrong product in the chart", currentRow, filePath);
+            Fail.fail(Log, "Wrong product in the cart", currentRow, filePath);
         }
     }
 
